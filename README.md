@@ -1,10 +1,10 @@
-# 📘 Custom Enterprise Airflow Governance SDK (`custom_governance`)
+# Custom Enterprise Airflow Governance SDK (`custom_governance`)
 
 **Decoupling Centralized Platform Governance from Data Warehousing Business Logic in Cloud Composer 2 / Apache Airflow.**
 
 ---
 
-## 🏛️ 1. Executive Summary & Design Philosophy
+## 1. Executive Summary & Design Philosophy
 
 In legacy Data Warehousing patterns, controlling whether specific job steps run required complex shell script wrappers, database parameter tables, and manual `IF / ELSE` flags embedded inside every SQL stored procedure.
 
@@ -18,7 +18,7 @@ When migrating to **Apache Airflow / Google Cloud Composer**, forcing data engin
 
 ---
 
-## ⚙️ 2. Package Architecture & Module Anatomy
+## 2. Package Architecture & Module Anatomy
 
 The `custom_governance` SDK consists of three lightweight, self-contained Python modules:
 
@@ -55,7 +55,7 @@ dags/custom_governance/
 
 ---
 
-## 🚀 3. Developer Quick-Start Guide (Zero Boilerplate!)
+## 3. Developer Quick-Start Guide (Zero Boilerplate!)
 
 To build a brand new governed pipeline, developers simply import operators from `custom_governance` instead of vanilla Airflow providers:
 
@@ -68,7 +68,7 @@ from datetime import datetime
 from airflow import DAG
 from airflow.utils.task_group import TaskGroup
 
-# 🌟 KEY STEP: Developers import from custom_governance SDK:
+# KEY STEP: Developers import from custom_governance SDK:
 from custom_governance.manifest import GovernanceManifestOperator
 from custom_governance.operators import BigQueryInsertJobOperator, PythonOperator
 
@@ -97,7 +97,7 @@ with DAG(
 
 ---
 
-## 📘 4. Operational Runbook (For Operations & Production Control)
+## 4. Operational Runbook (For Operations & Production Control)
 
 ### How to Skip / Decommission a Job Step:
 Operations engineers do not need to modify Airflow DAG code or delete database records. They simply update the control table:
