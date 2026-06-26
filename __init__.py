@@ -1,5 +1,5 @@
 """
-IBX Enterprise Airflow Governance SDK (ibx_governance)
+Custom Enterprise Airflow Governance SDK (custom_governance)
 
 Encapsulates central control registry lookups, dynamic skipping, 
 Secret Manager credential resolution, and compliance audit telemetry.

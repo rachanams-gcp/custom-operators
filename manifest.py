@@ -1,5 +1,5 @@
 """
-IBX Enterprise Manifest Snapshot Operator (ibx_governance.manifest)
+Custom Enterprise Manifest Snapshot Operator (custom_governance.manifest)
 """
 
 import json
@@ -17,8 +17,8 @@ class GovernanceManifestOperator(BaseOperator):
     Usage:
         manifest_task = GovernanceManifestOperator(
             task_id="sync_governance_manifest",
-            interface_cd="SRCPROV11172",
-            config_bucket="us-east4-composer2-edw-test-9f4b1a1a-bucket"
+            interface_cd="MY_INTERFACE_01",
+            config_bucket="my-composer-config-bucket"
         )
     """
     template_fields = ("interface_cd", "config_bucket")
@@ -26,12 +26,12 @@ class GovernanceManifestOperator(BaseOperator):
     def __init__(self, interface_cd: str, config_bucket: str = None, **kwargs):
         super().__init__(**kwargs)
         self.interface_cd = interface_cd
-        self.config_bucket = config_bucket or Variable.get("gcs_config_bucket", "us-east4-composer2-edw-test-9f4b1a1a-bucket")
+        self.config_bucket = config_bucket or Variable.get("gcs_config_bucket", "my-composer-config-bucket")
 
     def execute(self, context):
         dag_id = context["dag"].dag_id
-        project_id = Variable.get("gcp_project", "ihg-dart-edw-test5")
-        src_db = Variable.get("src_db", "DB_SRCT5")
+        project_id = Variable.get("gcp_project", "my-gcp-project-id")
+        src_db = Variable.get("control_db", "MY_CONTROL_DB")
         
         logging.info(f"Connecting to central control registry for Interface: {self.interface_cd}...")
         try:
@@ -45,7 +45,7 @@ class GovernanceManifestOperator(BaseOperator):
                      WHEN CAST(RW_EFF_DT AS STRING) > CAST(CURRENT_DATE() AS STRING) THEN 'N'
                      ELSE 'Y'
                    END as ctn_run_ind
-            FROM `{project_id}.{src_db}.ETL_JOB_DTL_PROD_CP_GGLE`
+            FROM `{project_id}.{src_db}.ETL_JOB_CONTROL_TABLE`
             WHERE UPPER(ETL_INTF_CD) = '{self.interface_cd.upper()}'
             """
             rows = [{"job_no": r.job_no, "job_nm": r.job_nm, "ctn_run_ind": r.ctn_run_ind} for r in bq_client.query(query).result()]

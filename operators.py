@@ -1,5 +1,5 @@
 """
-IBX Enterprise Governed Operators (ibx_governance.operators)
+Custom Enterprise Governed Operators (custom_governance.operators)
 Drop-in replacements for standard Airflow operators with automatic skip interception
 and built-in database audit logging.
 """
@@ -34,21 +34,21 @@ def _check_manifest_governance(task_id: str, dag_id: str):
                     raise AirflowSkipException(f"Task '{task_id}' disabled via central control registry.")
 
 def _audit_log(task_id: str, dag_id: str, status_cd: str, batch_id: str = "MANUAL"):
-    """Encapsulated central audit logging into ETL_JOB_AUDIT_PROD_CP_GGLE."""
+    """Encapsulated central audit logging into ETL_JOB_AUDIT_TABLE."""
     try:
         from airflow.models import Variable
         from google.cloud import bigquery
-        project_id = Variable.get("gcp_project", "ihg-dart-edw-test5")
-        src_db = Variable.get("src_db", "DB_SRCT5")
+        project_id = Variable.get("gcp_project", "my-gcp-project-id")
+        src_db = Variable.get("audit_db", "MY_AUDIT_DB")
         client = bigquery.Client(project=project_id)
         short_id = task_id.split(".")[-1]
         
         query = f"""
-        INSERT INTO `{project_id}.{src_db}.ETL_JOB_DTL_AUD_CTL_PROD_CP_GGLE`
+        INSERT INTO `{project_id}.{src_db}.ETL_JOB_AUDIT_TABLE`
         (ETL_INTF_CD, ETL_INTF_NBR, ETL_JOB_NO, ETL_PCS_ID, ETL_BATCH_SK, ETL_JOB_STRT_TS, ETL_JOB_END_TS, ETL_JOB_AUD_CTL_STS_CD, ETL_JOB_DTSTG_JOB_LOG_DSC)
         VALUES (
-            'SRCPROV11172_TEST',
-            11172,
+            'MY_INTERFACE_01',
+            100,
             '{short_id}',
             'P0',
             1001,
